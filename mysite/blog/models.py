@@ -1,11 +1,11 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 class PublishedManager(models.Manager):
     def get_queryset(self):
-        return super(PublishedManager, self).get_queryset().filter(status='published')
+        return super().get_queryset().filter(status='published')
 
 class Post(models.Model):
     STATUS_CHOICE = (
