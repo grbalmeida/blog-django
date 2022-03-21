@@ -3,8 +3,8 @@ from django.shortcuts import render, get_object_or_404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import ListView
 from django.core.mail import send_mail
-from .models import Post
-from .forms import EmailPostForm
+from .models import Post, Comment
+from .forms import EmailPostForm, CommentForm
 
 def post_list(request):
     object_list = Post.published.all()
@@ -30,7 +30,31 @@ def post_detail(request, year, month, day, post):
                              publish__month=month,
                              publish__day=day)
 
-    return render(request, 'blog/post/detail.html', {'post': post})
+    # Lista dos comentários ativos para esta postagem
+    comments = post.comments.filter(active=True)
+
+    new_comment = None
+
+    if request.method == 'POST':
+        # Um comentário foi postado
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            # Cria o objeto Comment, mas não
+            # o salva ainda no banco de dados
+            new_comment = comment_form.save(commit=False)
+            # Atribui a postagem atual ao comentário
+            new_comment.post = post
+            # Salva o comentário no banco de dados
+            new_comment.save()
+    else:
+        comment_form = CommentForm()
+
+    return render(request,
+                  'blog/post/detail.html',
+                  {'post': post,
+                   'comments': comments,
+                   'new_comment': new_comment,
+                   'comment_form': comment_form})
 
 class PostListView(ListView):
     queryset = Post.published.all()
