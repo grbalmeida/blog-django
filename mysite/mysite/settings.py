@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'django.contrib.sitemaps',
+    'django.contrib.postgres',
     'blog.apps.BlogConfig',
     'taggit',
 ]
@@ -80,8 +81,10 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'BlogDjango',
+        'USER': 'postgres',
+        'PASSWORD': 'default_123'
     }
 }
 
@@ -134,3 +137,8 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+# A pesquisa full-text é um processo custoso. Se estiver pesquisando
+# em mais de algumas centenas de linhas, você deve definir um índice
+# funcional correspondente ao vetor de pesquisa que você estiver usando.
+# Django disponibiliza um campo SearchVectorField para os seus modelos.
