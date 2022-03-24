@@ -113,11 +113,17 @@ def post_search(request):
         
         if form.is_valid():
             query = form.cleaned_data['query']
-            search_vector = SearchVector('title', 'body')
+            # Aplicamos diferentes pesos aos vetores de pesquisa criados
+            # com os campos title e body. Os pesos default são D, C, B e A, e referem-se aos números
+            # 0.1, 0.2, 0.4 e 1.0, respectivamente. Aplicamos um peso igual a 1.0 ao vetor de
+            # pesquisa de title e um peso igual a 0.4 ao vetor de body. As correspondências com
+            # o título prevalecerão sobre as correspondências com o conteúdo do corpo. Filtramos
+            # os resultados de modo a exibir somente aqueles cuja classificação seja superior a 0.3
+            search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B')
             search_query = SearchQuery(query)
             results = Post.published.annotate(
                 search=search_vector,
                 rank=SearchRank(search_vector, search_query)
-            ).filter(search=search_query).order_by('-rank')
+            ).filter(rank__gte=0.3).order_by('-rank')
 
     return render(request, 'blog/post/search.html', {'form': form, 'query': query, 'results': results})
