@@ -127,18 +127,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# E-mail
-# Se não for possível usar um servidor SMTP, você pode dizer a Django que escreva
-# os emails no console adicionando a seguinte configuração no arquivos settings.py
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-
-# A pesquisa full-text é um processo custoso. Se estiver pesquisando
-# em mais de algumas centenas de linhas, você deve definir um índice
-# funcional correspondente ao vetor de pesquisa que você estiver usando.
-# Django disponibiliza um campo SearchVectorField para os seus modelos.
